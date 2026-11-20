@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Remainder Theorem Calculator</title>
+    <meta name="description" content="A dynamic, interactive Chinese Remainder Theorem calculator with step-by-step explanations, algorithm comparisons, and cryptography application contexts.">
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-background"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <nav class="navbar glass">
+        <div class="nav-content container">
+            <h1 class="logo">Σ CRT Solve</h1>
+            <button id="theme-toggle" class="theme-btn" aria-label="Toggle Dark/Light Mode">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="app-header text-center">
+            <h2 class="title-gradient">Chinese Remainder Theorem</h2>
+            <p class="subtitle">Compute solutions to a system of simultaneous linear congruences.</p>
+        </header>
+
+        <div class="grid layout">
+            <!-- Left Column: Input Panel -->
+            <section class="panel glass input-panel">
+                <div class="panel-header">
+                    <h3>Input Congruences</h3>
+                    <p class="text-sm text-dim">Format: x ≡ a (mod m)</p>
+                </div>
+                
+                <form id="crt-form">
+                    <div id="congruences-container" class="congruences-list">
+                        <!-- Equation 1 -->
+                        <div class="congruence-row">
+                            <span class="var-x">x ≡</span>
+                            <div class="input-group">
+                                <input type="number" name="a" placeholder="a" required step="1" title="Integer a">
+                            </div>
+                            <span class="mod-text">(mod</span>
+                            <div class="input-group">
+                                <input type="number" name="m" placeholder="m" required min="1" step="1" title="Positive Integer m">
+                            </div>
+                            <span>)</span>
+                            <button type="button" class="btn-icon remove-row" disabled aria-label="Remove" title="Remove">&times;</button>
+                        </div>
+                        <!-- Equation 2 -->
+                        <div class="congruence-row">
+                            <span class="var-x">x ≡</span>
+                            <div class="input-group">
+                                <input type="number" name="a" placeholder="a" required step="1" title="Integer a">
+                            </div>
+                            <span class="mod-text">(mod</span>
+                            <div class="input-group">
+                                <input type="number" name="m" placeholder="m" required min="1" step="1" title="Positive Integer m">
+                            </div>
+                            <span>)</span>
+                            <button type="button" class="btn-icon remove-row" title="Remove">&times;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="add-congruence-btn" class="btn btn-secondary">
+                            <span>+ Add Equation</span>
+                        </button>
+                        <button type="submit" id="solve-btn" class="btn btn-primary">
+                            <span>Solve System</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="input-error" class="error-msg" style="display:none;"></div>
+            </section>
+
+            <!-- Right Column: Results & Info -->
+            <section class="results-layout">
+                <!-- Result Card -->
+                <div id="result-card" class="panel glass result-panel hidden">
+                    <div class="status-badge">Solution Found</div>
+                    <h3 class="result-title">Final Result</h3>
+                    <div class="result-formula">
+                        <span>x ≡ </span>
+                        <strong id="final-x" class="text-glow">0</strong>
+                        <span> (mod </span>
+                        <strong id="final-m">0</strong>
+                        <span>)</span>
+                    </div>
+                    <p class="text-sm">Smallest non-negative solution: <strong id="smallest-x">0</strong></p>
+                </div>
+
+                <!-- Tabs for Details -->
+                <div id="details-panel" class="panel glass tabs-panel hidden">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-target="steps">Steps</button>
+                        <button class="tab-btn" data-target="comparison">Algorithm Compare</button>
+                        <button class="tab-btn" data-target="crypto">Cryptography</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="tab-steps">
+                        <h4>Step-by-Step Execution</h4>
+                        <div id="steps-container" class="steps-list">
+                            <!-- Steps generated dynamically -->
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="tab-comparison">
+                        <h4>Performance Measurement</h4>
+                        <div class="comparison-grid">
+                            <div class="comp-card crt-card">
+                                <h5>CRT Method</h5>
+                                <div class="metric">
+                                    <span class="label">Time:</span>
+                                    <span id="crt-time">0 ms</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="label">Operations:</span>
+                                    <span id="crt-ops">0</span>
+                                </div>
+                                <p class="desc">Uses mathematical properties (modular inverses) for immediate O(k log N) resolution.</p>
+                            </div>
+                            <div class="comp-card naive-card">
+                                <h5>Naive Brute-Force</h5>
+                                <div class="metric">
+                                    <span class="label">Time:</span>
+                                    <span id="naive-time">0 ms</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="label">Iterations:</span>
+                                    <span id="naive-ops">0</span>
+                                </div>
+                                <p class="desc">Checks increments of the largest modulus one-by-one. Inefficient for large primes.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-crypto">
+                        <h4>Cryptography: RSA & CRT</h4>
+                        <div class="crypto-content">
+                            <p>The <strong>Chinese Remainder Theorem</strong> is fundamentally important in modern cryptography, particularly in the <strong>RSA</strong> algorithm.</p>
+                            
+                            <div class="feature-box">
+                                <h5>RSA Decryption Optimization</h5>
+                                <p>Instead of computing <code class="inline-code">m = c<sup>d</sup> mod (p*q)</code> directly (which involves very large numbers), we can use CRT to solve it faster:</p>
+                                <ol class="styled-list">
+                                    <li>Compute <code>m<sub>1</sub> = c<sup>d mod (p-1)</sup> mod p</code></li>
+                                    <li>Compute <code>m<sub>2</sub> = c<sup>d mod (q-1)</sup> mod q</code></li>
+                                    <li>Combine <code>m<sub>1</sub></code> and <code>m<sub>2</sub></code> using CRT to find <code>m mod (p*q)</code></li>
+                                </ol>
+                                <p>This reduces decryption time by roughly <strong>75%</strong> on average!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <p>Built with Vanilla Math & Magic</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
